@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProductCard from '../components/vue/ProductCard.vue';
+import Header from '../components/vue/Header.vue';
+import Pagination from '../components/vue/Pagination.vue';
+import type { GetStaticPaths } from 'astro';
+import Config from '../components/vue/Config.vue';
+import { color } from '../stores/productsStore.js';
+import { useStore } from '@nanostores/vue';
+
+const $color = useStore(color);
+let mainColor = $color.value;
+
+export async function getStaticPaths({ paginate }) {
+	const response = await fetch(`https://dummyjson.com/products`);
+	const result = await response.json();
+	const products = result.products;
+
+	return paginate(products, { pageSize: 6 });
+}
+
+const { page } = Astro.props;
+---
+
+<Layout title="Delta Chiguire Cart">
+	<Header client:load/>
+	<main>
+		{
+			page.data.map(($product) =>(
+				<ProductCard client:load
+					id={$product.id}
+					images={$product.images}
+					description={$product.description}
+					price={$product.price}
+					title={$product.title}
+					category={$product.category}
+					id={$product.id}
+					stock={$product.stock}
+				/> 
+			))
+		}
+	</main>
+	<Pagination 
+		next={page.url.next} 
+		prev={page.url.prev}
+		current={page.currentPage}
+		last={page.lastPage}
+	client:load
+	/>
+</Layout>
+
+<style>
+	main {
+		margin: auto;
+		padding: 1rem;
+		width: 80rem;
+		max-width: calc(100% - 2rem);
+		color: white;
+		font-size: 20px;
+		line-height: 1.6;
+		@apply grid grid-cols-3 auto-rows-fr gap-x-16
+	}
+
+	img{
+		@apply flex w-1/2
+	}
+
+	@media (max-width: 1050px){
+		main{
+			@apply grid-cols-2;
+		}
+	}
+
+	@media (max-width: 600px){
+		main{
+			@apply grid-cols-1;
+		}
+	}
+</style>

@@ -1,0 +1,27 @@
+---
+import { ViewTransitions } from "astro:transitions";
+import Cart from "../components/vue/Cart.vue";
+import Config from "../components/vue/Config.vue";
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/capybara.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<ViewTransitions />
+		<title>{title}</title>
+	</head>
+		<Cart client:load/>
+		<Config client:load/>
+		<slot />
+	</body>
+</html>
+<style is:global>
+	
+</style>

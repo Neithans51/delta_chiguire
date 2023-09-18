@@ -1,0 +1,44 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import type { GetStaticPaths } from "astro";
+import ProductDetail  from "../../components/vue/ProductDetail.vue";
+import Header from "../../components/vue/Header.vue";
+
+export async function getStaticPaths() {
+	const response = await fetch(`https://dummyjson.com/products`);
+	const result = await response.json();
+	const products = result.products;
+
+	return products.map(($product) => ({
+		params: {
+			category: $product.category, id: $product.id
+		},
+		props: {
+			...$product
+		}
+
+	}));
+}
+
+const { product } = Astro.params;
+const { id, images, title, description, price, rating, discountPercentage, stock } = Astro.props;
+---
+
+<Layout title={title}>
+    <Header client:load/>
+	<main>
+        <ProductDetail id={id} title={title} images={images} description={description} price={price} rating={rating} discountPercentage={discountPercentage} stock={stock} client:load />
+    </main>
+</Layout>
+
+<style>
+    main{
+        @apply flex  w-full justify-between max-w-[600px] max-h-[450px] my-8 mx-auto;
+    }
+
+	@media (max-width: 600px){
+		main{
+			@apply block;
+		}
+	}
+</style>
